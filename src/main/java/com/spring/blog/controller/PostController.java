@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/posts")
 public class PostController {
@@ -23,6 +25,27 @@ public class PostController {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
-    // get all blog post
+    // Get all blog post
+    @GetMapping
+    public List<PostDto> getAllPosts(){
+        return postService.getAllPosts();
+    }
+
+    // Get single post by id
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDto> getPostById(@PathVariable("id") long postId){
+        return ResponseEntity.ok(postService.getPostById(postId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PostDto> updatePostById(@RequestBody PostDto postDto, @PathVariable("id") long postId){
+        return new ResponseEntity<>(postService.updatePostById(postDto, postId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePostById(@PathVariable("id") long postId){
+        postService.deletePostById(postId);
+        return new ResponseEntity<>("Post deleted successfully!", HttpStatus.OK);
+    }
 
 }
