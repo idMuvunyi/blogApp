@@ -1,5 +1,6 @@
 package com.spring.blog.service.impl;
 
+import com.spring.blog.exception.BlogAPIException;
 import com.spring.blog.exception.ResourceNotFoundException;
 import com.spring.blog.model.Comment;
 import com.spring.blog.model.Post;
@@ -7,7 +8,11 @@ import com.spring.blog.payload.CommentDto;
 import com.spring.blog.repository.CommentRepository;
 import com.spring.blog.repository.PostRepository;
 import com.spring.blog.service.CommentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImp implements CommentService {
@@ -40,6 +45,31 @@ public class CommentServiceImp implements CommentService {
         return commentResponse;
     }
 
+    @Override
+    public List<CommentDto> getCommentsByPostId(long postId) {
+        // get comments by postId
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        List<CommentDto> commentResponse = comments.stream().map(comment -> mapToDto(comment)).collect(Collectors.toList());
+
+        return commentResponse;
+    }
+
+    @Override
+    public CommentDto getCommentById(long postId, long commentId) {
+        // retrieve post with specific id
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+        // retrieve comment with specific id
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+
+        if(comment.getPost().getId() != (post.getId())){
+          throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+        }
+
+        CommentDto commentResponse = mapToDto(comment);
+        return commentResponse;
+    }
+
+
     // convert Entity/Model to DTO
     private CommentDto mapToDto(Comment comment){
         CommentDto commentDto = new CommentDto();
@@ -47,6 +77,7 @@ public class CommentServiceImp implements CommentService {
         commentDto.setName(comment.getName());
         commentDto.setEmail(comment.getEmail());
         commentDto.setBody(comment.getBody());
+
 
         return commentDto;
     }
