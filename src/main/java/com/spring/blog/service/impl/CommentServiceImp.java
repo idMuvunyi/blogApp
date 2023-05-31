@@ -25,6 +25,7 @@ public class CommentServiceImp implements CommentService {
     public CommentServiceImp(CommentRepository commentRepository, PostRepository postRepository, ModelMapper mapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
     @Override
