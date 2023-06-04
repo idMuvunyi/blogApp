@@ -7,6 +7,7 @@ import com.spring.blog.payload.LoginDto;
 import com.spring.blog.payload.RegisterDto;
 import com.spring.blog.repository.RoleRepository;
 import com.spring.blog.repository.UserRepository;
+import com.spring.blog.security.JwtTokenProvider;
 import com.spring.blog.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,13 +28,15 @@ public class AuthServiceImpl implements AuthService {
     private RoleRepository roleRepository;
     // get access to password encoder to user when enrolling new user to "db.users"
     private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
 
     // get access to the auth Manager to verify if a user exist/not
-    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository repository, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository repository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -45,7 +48,10 @@ public class AuthServiceImpl implements AuthService {
       // store authentication returned object in the spring security context
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-      return "User logged in successfully!";
+        // return token after login
+        String token = jwtTokenProvider.generateToken(authentication);
+
+      return token;
     }
 
     @Override
