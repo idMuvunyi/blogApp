@@ -34,4 +34,10 @@ public class Post {
     // extract available comments for certain post by "Set" to avoid duplicates in a listing
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
+
+    // establish relationship between categories (many posts can belong to one category)
+    // LAZY type means : category will be fetched upon demand by calling getter method
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
