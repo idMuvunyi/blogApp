@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -22,5 +23,7 @@ public class PostDto {
     @NotEmpty
     private String content;
     private Set<CommentDto> comments;
+
+    private Long categoryId;
 
 }

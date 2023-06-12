@@ -1,9 +1,11 @@
 package com.spring.blog.service.impl;
 
 import com.spring.blog.exception.ResourceNotFoundException;
+import com.spring.blog.model.Category;
 import com.spring.blog.model.Post;
 import com.spring.blog.payload.PostDto;
 import com.spring.blog.payload.PostResponse;
+import com.spring.blog.repository.CategoryRepository;
 import com.spring.blog.repository.PostRepository;
 import com.spring.blog.service.PostService;
 import org.modelmapper.ModelMapper;
@@ -20,19 +22,24 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
+    private CategoryRepository categoryRepository;
     // use model mapper lib to map DTO to entity and vice versa automatically
     private ModelMapper mapper;
 
 
-    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
+    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, ModelMapper mapper) {
         this.postRepository = postRepository;
+        this.categoryRepository = categoryRepository;
         this.mapper = mapper;
     }
 
     @Override
     public PostDto createPost(PostDto postDto) {
+       Category category = categoryRepository.findById(postDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDto.getCategoryId()));
         // let's convert DTO to entity/model
         Post post = mapToModel(postDto);
+        // set category for this newly created post
+        post.setCategory(category);
         // save to DB through Jpa
         Post newPost = postRepository.save(post);
         // let's convert entity/model to DTO

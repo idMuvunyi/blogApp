@@ -35,7 +35,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryResponse);
     }
 
-    // get all blog psost categories
+    // get all blog post categories
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getAllCategories(){
         List<CategoryDto> categoryList = categoryService.getAllCategories();
