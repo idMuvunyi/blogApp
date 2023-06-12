@@ -35,17 +35,24 @@ public class CategoryController {
         return ResponseEntity.ok(categoryResponse);
     }
 
-    // get all categories
+    // get all blog psost categories
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getAllCategories(){
         List<CategoryDto> categoryList = categoryService.getAllCategories();
         return ResponseEntity.ok(categoryList);
     }
 
-    // update category
+    // update blog post category
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto, @PathVariable(name = "id") Long id){
         return ResponseEntity.ok(categoryService.updateCategory(id, categoryDto));
+    }
+    // delete blog post category
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable(name = "id") Long id){
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok("Category is deleted successfully!");
     }
 }
