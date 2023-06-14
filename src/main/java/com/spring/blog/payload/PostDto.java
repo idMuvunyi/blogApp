@@ -1,6 +1,7 @@
 package com.spring.blog.payload;
 
 
+import com.spring.blog.model.Post;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
