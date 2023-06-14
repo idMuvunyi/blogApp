@@ -23,7 +23,6 @@ public class Category {
     private String description;
 
     // establish relationship between post (one category can belong to many posts)
-
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
 }

@@ -80,10 +80,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto updatePostById(PostDto postDto, long id) {
+        // Get access to category to use this entity when updating a post
+        Category category = categoryRepository.findById(postDto.getCategoryId()).orElseThrow(()-> new ResourceNotFoundException("Category", "id", postDto.getCategoryId()));
+
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
+        post.setCategory(category);
 
         Post updatedPost = postRepository.save(post);
         return mapToDTO(updatedPost);
@@ -93,6 +97,15 @@ public class PostServiceImpl implements PostService {
     public void deletePostById(long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         postRepository.delete(post);
+    }
+
+    @Override
+    public List<PostDto> getPostByCategory(Long id) {
+        // verify if category exists in database before search in posts
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
+        List<Post> posts = postRepository.findByCategoryId(id);
+
+        return posts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
     }
 
     // create private method to access common code
